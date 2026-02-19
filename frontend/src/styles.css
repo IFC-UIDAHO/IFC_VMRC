@@ -1,0 +1,1432 @@
+/* -------------------------------------------------------
+   GLOBAL RESET + BASE STYLES
+------------------------------------------------------- */
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", sans-serif;
+  background: #f8fafc; /* light gray background */
+  color: #1e293b; /* dark gray text */
+}
+
+/* -------------------------------------------------------
+   TECHY BACKGROUND GRID (very subtle)
+------------------------------------------------------- */
+
+body {
+  background: #f8fafc; /* clean light gray background */
+  background-size: cover;
+  overflow: hidden; /* No page-level scroll; map + sidebars use fixed height */
+}
+
+/* -------------------------------------------------------
+   HEADER
+------------------------------------------------------- */
+
+.app-header {
+  height: 120px;              /* Accommodate larger title and logos */
+  min-height: 120px;
+  background: #ffffff;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 99999 !important;   /* 🔥 ALWAYS ON TOP */
+}
+
+/* left & right logo areas */
+.app-header-side {
+  width: 220px;              /* Width for larger logos (e.g. Oregon.jpg) */
+  min-width: 160px;          /* Responsive minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* center title/subtitle block */
+.app-header-center {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.app-title {
+  font-size: 38px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.app-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* logo images */
+.header-logo-img {
+  height: 95px;               /* Larger logo (e.g. Oregon.jpg) */
+  max-height: 100px;          /* Maximum height cap */
+  width: auto;                /* Maintain aspect ratio */
+  max-width: 100%;            /* Responsive: don't overflow container */
+  object-fit: contain;        /* Preserve aspect ratio */
+  object-position: center;     /* Center the image */
+}
+
+/* Responsive logo sizing for smaller screens */
+@media (max-width: 768px) {
+  .app-header {
+    height: 100px;             /* Slightly smaller header on tablets */
+    min-height: 100px;
+    padding: 0 16px;          /* Reduce padding */
+  }
+  
+  .app-header-side {
+    width: 160px;             /* Narrower logo areas on smaller screens */
+    min-width: 120px;
+  }
+  
+  .header-logo-img {
+    height: 70px;             /* Smaller logos on tablets */
+    max-height: 75px;
+  }
+  
+  .app-main {
+    margin-top: 100px;
+    height: calc(100vh - 100px);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    height: 80px;             /* Compact header on mobile */
+    min-height: 80px;
+    padding: 0 12px;
+  }
+  
+  .app-header-side {
+    width: 100px;             /* Narrow logo areas on mobile */
+    min-width: 80px;
+  }
+  
+  .header-logo-img {
+    height: 50px;             /* Smaller logos on mobile */
+    max-height: 55px;
+  }
+  
+  .app-main {
+    margin-top: 80px;
+    height: calc(100vh - 80px);
+  }
+  
+  .app-title {
+    font-size: 22px;          /* Slightly smaller title on mobile */
+  }
+}
+
+/* Shell + main layout – fixed height, no page scroll */
+.app-shell {
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-main {
+  margin-top: 120px; /* same as header height */
+  height: calc(100vh - 100px);
+  min-height: 0;
+  overflow: hidden; /* No page scroll; map always visible; sidebars scroll internally */
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+/* -------------------------------------------------------
+   3-COLUMN LAYOUT
+------------------------------------------------------- */
+
+.layout-3col {
+  display: grid;
+  grid-template-columns: 300px 1fr auto;
+  grid-template-rows: 1fr; /* Single row, equal height */
+  gap: 18px;
+  padding: 18px;
+  flex: 1; /* Fill app-main so map gets fixed height */
+  min-height: 0; /* Allow grid items to shrink */
+  overflow: hidden;
+}
+
+/* -------------------------------------------------------
+   CARDS / PANELS
+------------------------------------------------------- */
+
+.card {
+  background: #ffffff;
+  backdrop-filter: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 0; /* sharp edges */
+  padding: 18px;
+  box-shadow: none; /* no heavy shadows */
+  min-height: 0; /* Allow shrinking in grid */
+  display: flex;
+  flex-direction: column;
+}
+
+/* LEFT PANEL */
+.panel-left {
+  padding-right: 6px;
+  min-height: 0; /* Allow shrinking */
+  overflow-y: auto; /* Scroll only if content exceeds height */
+}
+
+/* Modern thin scrollbar */
+.panel-left::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-left::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-left::-webkit-scrollbar-thumb {
+  background: #cbd5e1;     /* light gray */
+  border-radius: 0; /* sharp edges */
+}
+
+.panel-left::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;     /* slightly darker */
+}
+
+
+
+/* FORCE MAP TO STAY BELOW UI PANELS – fixed height, no scroll */
+.panel-map {
+  pointer-events: auto;
+  z-index: 1 !important;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 0; /* sharp edges */
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  z-index: 1 !important;
+}
+
+.map-left-stack {
+  position: absolute;
+  left: 12px;
+  z-index: 9999;
+}
+
+
+/* -------------------------------------------------------
+   INPUTS / DROPDOWNS
+------------------------------------------------------- */
+
+.input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 0; /* sharp edges */
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.input option {
+  background: #ffffff;
+  color: #1e293b;
+}
+
+/* CONTROL LABELS */
+.control-group label {
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* -------------------------------------------------------
+   AOI DRAWER
+------------------------------------------------------- */
+
+.aoi-section {
+  margin-top: 6px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #1e293b;
+}
+
+.section-help {
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.section-status {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.section-status.good {
+  color: #16a34a; /* muted green */
+}
+
+.btn-secondary {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 0; /* sharp edges */
+  cursor: pointer;
+  color: #475569;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+}
+
+/* -------------------------------------------------------
+   MAP CONTAINER
+------------------------------------------------------- */
+
+/* Removed duplicate - using the one in .panel-map section */
+
+.leaflet-control-container .drawing-tools-box {
+  position: absolute;
+  top: 120px !important;     /* lowered */
+  left: 20px !important;     /* moved left */
+  z-index: 9999;
+}
+
+
+/* -------------------------------------------------------
+   SLIDING PANEL (RIGHT SIDE) - PART OF GRID LAYOUT
+------------------------------------------------------- */
+
+.sliding-panel {
+  background: #ffffff;
+  backdrop-filter: none;
+  border-left: 1px solid #e2e8f0;
+  box-shadow: -1px 0 3px rgba(0,0,0,0.1);
+  transition: width 0.35s ease;
+  z-index: 900;
+  align-self: stretch; /* Stretch to fill grid row height */
+  min-height: 0; /* Allow shrinking */
+  overflow: hidden; /* Flex children (e.g. Created Rasters list) scroll internally */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Content inside panel - flex column so tab content can fill height */
+.sliding-panel-inner {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Tab content fills remaining height and is a flex column (enables Created Rasters to grow) */
+.tab-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Toggle button stays outside, vertically centered */
+.panel-toggle-button {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 64px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-right: none;
+  backdrop-filter: none;
+  border-radius: 0; /* sharp edges */
+
+  cursor: pointer;
+  color: #475569;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: background 0.25s ease, right 0.35s ease;
+  z-index: 950;
+}
+
+.panel-toggle-button:hover {
+  background: #f1f5f9;
+}
+
+/* -------------------------------------------------------
+   TAB BAR ICONS
+------------------------------------------------------- */
+
+.tab-bar {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tab-button {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0; /* sharp edges */
+  padding: 8px;
+  cursor: pointer;
+  color: #64748b;
+  transition: 0.25s;
+}
+
+.tab-button.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  box-shadow: none; /* no glow */
+}
+
+.tab-button:hover {
+  background: #f1f5f9;
+}
+
+/* -------------------------------------------------------
+   HISTOGRAM STYLING
+------------------------------------------------------- */
+
+/* Created Rasters section: grows to fill remaining sidebar height below histogram */
+.created-rasters-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.created-rasters-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.histogram-wrapper {
+  margin-top: 6px;
+}
+
+.hist-title {
+  margin-bottom: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.empty-hist {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.hist-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+/* -------------------------------------------------------
+   HEATMAP PANEL
+------------------------------------------------------- */
+
+.heatmap-panel h4 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  color: #f1f5f9;
+}
+
+.slider-group {
+  margin-bottom: 14px;
+}
+
+.slider-group label {
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.slider-group input[type="range"] {
+  width: 100%;
+}
+
+/* SUMMARY BOX */
+.heatmap-summary {
+  margin-top: 10px;
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 0; /* sharp edges */
+  border: 1px solid #e2e8f0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #1e293b;
+}
+
+/* -------------------------------------------------------
+   STATS TABLE
+------------------------------------------------------- */
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.stats-label {
+  text-align: left;
+  padding: 6px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.stats-value {
+  text-align: right;
+  padding: 6px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.stats-table tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* -------------------------------------------------------
+   EXPORT PANEL
+------------------------------------------------------- */
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+/* -------------------------------------------------------
+   MAP TOOLS (CLEAR / SAVE POINT)
+------------------------------------------------------- */
+
+/* Push the drawing tools panel down so it doesn't cover the map corner */
+/* Drawing tools box */
+.map-tools {
+  margin-top: 90px;              /* push it a bit below zoom buttons */
+  margin-left: 20px;
+}
+
+.map-tools-inner {
+  background: #ffffff;
+  color: #1e293b;
+  padding: 10px 12px;
+  border-radius: 0; /* sharp edges */
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 170px;
+}
+
+.map-tools-header {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.5);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+/* rows of buttons */
+.map-tools-row {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.map-tools-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: none;
+  background: #1f2937;
+  color: #e5e7eb;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Position the custom map tools so they don't cover the zoom buttons */
+.map-tools.leaflet-top.leaflet-left {
+  top: 80px;   /* push it down below + / - */
+  left: 10px;
+}
+
+.map-tools-btn:hover {
+  background: #374151;
+}
+
+.map-tools-divider {
+  border: none;
+  border-top: 1px solid rgba(148,163,184,0.4);
+  margin: 4px 0;
+}
+
+/* small glyphs that look like the shape type */
+.tool-icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+/* polygon: little triangle */
+.tool-icon--poly {
+  background: #38bdf8;
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+/* rectangle: simple rounded box */
+.tool-icon--rect {
+  border-radius: 3px;
+  border: 2px solid #38bdf8;
+}
+
+/* undo: curved arrow-ish */
+.tool-icon--undo {
+  border-left: 2px solid #e5e7eb;
+  border-top: 2px solid #e5e7eb;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px 0 0 0;
+}
+
+/* clear: little "X" */
+.tool-icon--clear {
+  position: relative;
+}
+.tool-icon--clear::before,
+.tool-icon--clear::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 2px;
+  background: #e5e7eb;
+  transform-origin: center;
+}
+.tool-icon--clear::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.tool-icon--clear::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* save: tiny dot/point */
+.tool-icon--save {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #f97316;
+}
+
+/* Primary action button (Generate Map) */
+.btn-primary {
+  padding: 9px 14px;
+  border-radius: 0; /* sharp edges */
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: none; /* no glow */
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: none; /* no glow */
+  transform: none; /* no transform */
+}
+
+.btn-primary:disabled {
+  cursor: default;
+  opacity: 0.6;
+  box-shadow: none;
+  background: #94a3b8;
+  border-color: #94a3b8;
+}
+
+/* VMRC Legend - Persistent Leaflet Control, top-left, non-blocking */
+.leaflet-top.leaflet-left .vmrc-legend {
+  margin-top: 80px !important; /* Offset downward to avoid Leaflet controls */
+  margin-left: 12px !important;
+  pointer-events: none !important; /* CRITICAL: never block map UI */
+  z-index: 1000 !important; /* Ensure visibility above tiles */
+}
+
+.vmrc-legend {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  pointer-events: none !important; /* Ensure no click interception */
+}
+
+/* Legend card in bottom-left of the map */
+.legend-card {
+  margin-left: 20px;
+  margin-bottom: 20px;
+  background: #ffffff;
+  color: #1e293b;
+  padding: 10px 12px;
+  border-radius: 0; /* sharp edges */
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  pointer-events: none !important; /* Ensure no click interception */
+}
+
+.legend-title {
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  border-radius: 3px;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.legend-label {
+  font-size: 12px;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.legend-note {
+  color: #94a3b8;
+  font-size: 10px;
+  font-style: italic;
+  margin-bottom: 6px;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.legend-offset {
+  top: 220px; /* Moves legend just under Drawing Tools */
+}
+
+.tools-card, .legend-card {
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: 0; /* sharp edges */
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  width: 140px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* -------------------------------------------------------
+   TOOLS
+------------------------------------------------------- */
+
+.tools-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.tools-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 2px;
+  border-radius: 6px;
+  border: none;
+  background: #1f2937;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tools-btn:hover {
+  background: #374151;
+}
+
+/* -----------------------------------------
+   POSITION DRAWING TOOLS + LEGEND CLEANLY
+----------------------------------------- */
+
+/* Drawing Tools (custom card) */
+.map-tools.leaflet-top.leaflet-left {
+    top: 120px !important;     /* sits below + / - zoom */
+    left: 0.2px !important;
+    z-index: 9999 !important;
+}
+
+/* Legend sits DIRECTLY under tools */
+.legend-card {
+    position: absolute !important;
+    top: 1px !important;     /* tools box is ~150px tall → 240 lines it up perfectly */
+    left: 10px !important;
+    z-index: 9998 !important;
+
+    background: #ffffff;
+    padding: 10px 20px;
+    border-radius: 0; /* sharp edges */
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Hide PM's Text + Rotate Buttons FOREVER */
+.leaflet-control-container .leaflet-control button[title="Add Text"],
+.leaflet-control-container .leaflet-control button[title="Rotate Mode"] {
+    display: none !important;
+}
+
+/* Ensure RemovalMode (erase/trash) button is visible */
+.leaflet-pm-toolbar .leaflet-pm-icon-removal,
+.leaflet-pm-toolbar .leaflet-pm-icon-removalMode,
+.leaflet-pm-toolbar button[title*="Remove"],
+.leaflet-pm-toolbar button[title*="Delete"],
+.leaflet-pm-toolbar button[title*="Erase"] {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.info-card {
+  background: #020617;
+  color: #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  margin: 0 0 16px 16px;
+}
+
+.info-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.info-line {
+  line-height: 1.4;
+}
+
+.inspect-tooltip {
+  background: #020617 !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  border-radius: 6px;
+  padding: 4px 6px;
+  color: white !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+}
+
+
+.inspect-tooltip-inner {
+  background: #020617;           /* dark navy */
+  color: #f9fafb;
+  padding: 6px 5px;
+  border-radius: 6px;
+  font-size: 11px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.inspect-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.inspect-line {
+  line-height: 1.3;
+}
+
+.sidebar-field {
+  margin-bottom: 1.25rem;
+}
+
+.sidebar-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #e5e7eb;
+  margin-bottom: 0.35rem;
+}
+
+.sidebar-help {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-input-hidden {
+  display: none; /* hide the ugly native input */
+}
+
+.btn-secondary {
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.375rem;
+  border: 1px solid #374151;
+  background: #111827;
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: #1f2937;
+  border-color: #4b5563;
+}
+
+.file-hint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* Small section headers inside the left panel */
+.panel-section-title {
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0; /* sharp edges */
+
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: none;
+}
+
+/* Make the Generate button span the width nicely */
+.btn-primary.full-width {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Wrapper for input groups */
+.filter-block {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-block label {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Filter label with info icon + tooltip/popover */
+.filter-label-with-info {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.filter-label-with-info__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.filter-label-with-info__spacer {
+  flex-shrink: 0;
+}
+
+.filter-label-with-info__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.filter-label-with-info__trigger:hover,
+.filter-label-with-info__trigger:focus {
+  background: #cbd5e1;
+  color: #1e293b;
+  outline: 2px solid #64748b;
+  outline-offset: 2px;
+}
+
+.filter-label-with-info__short {
+  width: 100%;
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.filter-label-with-info__popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 6px;
+  max-width: 280px;
+  min-width: 200px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1e293b;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 10000;
+  word-wrap: break-word;
+}
+
+/* Section blocks like "Export", "Custom AOI" */
+.filter-section {
+  margin-top: 28px;
+  margin-bottom: 16px;
+  position: relative; /* Ensure normal flow */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure export container stays within filter-section */
+.filter-section > div {
+  position: relative;
+  overflow: hidden; /* Hide overflow for smooth collapse */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Collapsible content animation */
+.filter-section > div > div[style*="padding"] {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+
+/* Makes buttons fill width */
+.full-width {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Space between checkbox rows */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Space under titles */
+.section-title {
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Panel body (for histogram and other panels) */
+.panel-body {
+  padding: 16px;
+  background: #ffffff;
+  color: #1e293b;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Raster overlay: FORCE pixelated rendering (nearest neighbor) - no smoothing */
+/* This ensures coarse raster pixels (600-800m) display as sharp blocky pixels at all zoom levels */
+/* Target the ImageOverlay layer div and all img elements inside it */
+.leaflet-image-layer.vmrc-raster-overlay,
+.leaflet-image-layer.vmrc-raster-overlay img,
+.leaflet-image-layer.vmrc-raster-overlay > img,
+.vmrc-raster-overlay img,
+.leaflet-image-layer.raster-overlay-pixelated,
+.leaflet-image-layer.raster-overlay-pixelated img,
+.leaflet-image-layer.raster-overlay-pixelated > img,
+.raster-overlay-pixelated,
+.raster-overlay-pixelated img {
+  image-rendering: -moz-crisp-edges !important; /* Firefox */
+  image-rendering: -webkit-crisp-edges !important; /* Safari */
+  image-rendering: pixelated !important; /* Chrome/Edge */
+  image-rendering: crisp-edges !important; /* Standard */
+  /* Prevent any browser smoothing */
+  -ms-interpolation-mode: nearest-neighbor !important; /* IE/Edge legacy */
+}
+
+/* 🔥 FORCE CROSSHAIR CURSOR ON ALL LEAFLET MAPS 🔥 */
+.leaflet-container,
+.leaflet-container.leaflet-grab,
+.leaflet-container.leaflet-dragging {
+  cursor: crosshair !important;
+}
+
+/* Zoom resolution indicator */
+/* Raster Quality Badge - Only visible when raster overlay exists */
+.leaflet-bottom.leaflet-right .zoom-resolution-indicator {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 70px !important; /* Lift up to avoid overlapping UI */
+  margin-right: 12px !important;
+  pointer-events: none !important; /* CRITICAL: never block map UI */
+  z-index: 1000 !important; /* Ensure visibility above tiles */
+}
+
+/* Hide quality badge when showing "READY" or "Waiting for raster" state */
+.zoom-resolution-badge.zoom-resolution-ready {
+  display: none !important;
+}
+
+.zoom-resolution-indicator {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  pointer-events: none !important; /* Ensure no click interception */
+}
+
+.zoom-resolution-badge {
+  background: #ffffff;
+  backdrop-filter: none;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #2563eb;
+  border-radius: 0; /* sharp edges */
+  padding: 8px 12px;
+  font-size: 11px;
+  line-height: 1.4;
+  min-width: 140px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  pointer-events: none !important; /* Ensure no click interception */
+}
+
+.zoom-resolution-badge.zoom-resolution-ready {
+  border-left-color: #64748b;
+}
+
+.zoom-resolution-label {
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+  color: #475569;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.zoom-resolution-text {
+  color: #1e293b;
+  font-size: 11px;
+  margin-bottom: 2px;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+.zoom-resolution-size {
+  color: #64748b;
+  font-size: 10px;
+  font-family: monospace;
+  pointer-events: none; /* Ensure no click interception */
+}
+
+/* Map status bar (bottom-left): coords + eye altitude */
+.leaflet-bottom.leaflet-left .map-status-bar {
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 2px;
+  font-size: 11px;
+  line-height: 1.3;
+  margin: 0 0 10px 10px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.map-status-bar .map-status-item {
+  white-space: nowrap;
+}
+
+.map-status-bar .map-status-sep {
+  margin: 0 8px;
+  opacity: 0.7;
+}
+
+/* Zoom warning for raster resolution limit */
+.zoom-warning {
+  background: rgba(239, 68, 68, 0.95); /* red background */
+  border: 2px solid rgba(220, 38, 38, 1);
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.zoom-warning-content {
+  padding: 10px 14px;
+  color: white;
+  font-size: 13px;
+  line-height: 1.4;
+  min-width: 220px;
+}
+
+.zoom-warning-content strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+
+.histogram-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.histogram-bars {
+  display: flex;
+  align-items: flex-end;
+  height: 140px;
+  gap: 6px;
+}
+
+.histogram-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.histogram-bar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+}
+
+.histogram-label {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #aab4c8;
+}
+
+.histogram-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #d0d7e5;
+}
+
+.hist-svg text {
+  letter-spacing: 0.5px;
+}
+
+.histogram-container {
+  margin-top: 10px;
+  padding: 8px 4px 4px;
+}
+
+.histogram-bars {
+  display: flex;
+  align-items: flex-end;
+  height: 160px;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.histogram-bar-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.histogram-bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+}
+
+.histogram-axis {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.histogram-tick {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  color: #cbd5f5;
+}
+
+.histogram-tick-line {
+  width: 1px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2px;
+}
+
+.histogram-tick-label {
+  transform: translateX(-50%);
+}
+
+.histogram-x-label {
+  text-align: center;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #cbd5f5;
+}
+
+.inspect-tooltip {
+  background: #020617 !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 4px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  color: #fff;
+}
+
+.inspect-tooltip-inner {
+  font-size: 11px;
+}
+
+.inspect-title {
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: #facc15;
+}
+
+/* FORCE TOOLTIP ABOVE ALL UI PANELS */
+.leaflet-tooltip {
+  z-index: 100000 !important;
+}
+
+/* Raster hover tooltip styles */
+.raster-hover-tooltip {
+  background: #020617 !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px;
+  padding: 0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.raster-tooltip-content {
+  background: #020617;
+  color: #f9fafb;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  min-width: 140px;
+}
+
+.raster-tooltip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #ffffff;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.raster-tooltip-line {
+  margin: 2px 0;
+  color: #e5e7eb;
+}
+
+.raster-tooltip-line strong {
+  color: #ffffff;
+  font-weight: 500;
+}

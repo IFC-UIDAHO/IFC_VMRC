@@ -3,6 +3,7 @@ import uuid
 import traceback
 from pathlib import Path
 
+import os
 import rasterio
 from rasterio.mask import mask
 from rasterio.features import geometry_mask
@@ -20,7 +21,7 @@ from typing import Optional
 from app.services.raster_index import RASTER_LOOKUP_LIST
 
 # AOI + output dir
-AOI_PATH = Path(r"D:\VMRC_Project\Data_Analysis!!\AOI_diss\AOI_diss.shp")
+AOI_PATH =  Path(os.getenv("AOI_PATH", "/data/AOI/AOI_diss.shp"))
 OVERLAY_DIR = Path("static/overlays")
 OVERLAY_DIR.mkdir(parents=True, exist_ok=True)
 

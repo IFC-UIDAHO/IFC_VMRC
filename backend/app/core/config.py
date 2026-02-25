@@ -3,8 +3,13 @@
 import os
 from functools import lru_cache
 from typing import List, Optional
+from pathlib import Path
 
 from pydantic import BaseModel, AnyHttpUrl, field_validator  # BaseSettings not needed
+
+RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
+MORTALITY_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
+AOI_PATH    = Path(os.getenv("AOI_PATH", "/data/AOI/AOI_diss.shp"))
 
 class Settings(BaseModel):
     # Basic app info

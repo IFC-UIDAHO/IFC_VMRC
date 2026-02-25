@@ -7,6 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Tuple
 
+import os
 import fiona
 import numpy as np
 import rasterio
@@ -16,13 +17,14 @@ from rasterio.warp import transform_geom
 from shapely.geometry import shape, mapping
 from shapely.ops import unary_union
 from shapely.geometry.base import BaseGeometry
+from app.core.config import RASTER_ROOT, AOI_PATH, MORTALITY_ROOT
 
 
 # ============================================================
 # AOI SHAPEFILE PATH
 # ============================================================
 
-AOI_SHP_PATH = Path(r"D:\VMRC_Project\Data_Analysis!!\AOI_diss\AOI_diss.shp")
+AOI_SHP_PATH = Path(os.getenv("AOI_PATH", "/data/AOI/AOI_diss.shp"))
 
 
 # ============================================================

@@ -14,13 +14,10 @@ from pathlib import Path
 
 from app.db.session import SessionLocal
 from app.models.raster_layer import RasterLayer
+from app.core.config import RASTER_ROOT, AOI_PATH, MORTALITY_ROOT
 
 # 👇 CHANGE THIS IF YOUR ROOT MOVES
-MORTALITY_ROOT = Path(
-    r"D:\VMRC_Project\Data_Analysis!!\Dec 9\Mortality"
-)
-
-
+MORTALITY_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
 
 def main() -> None:
     db = SessionLocal()

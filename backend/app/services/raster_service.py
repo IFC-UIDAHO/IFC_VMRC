@@ -21,7 +21,9 @@ from typing import Optional
 from app.services.raster_index import RASTER_LOOKUP_LIST
 
 # AOI + output dir
-AOI_PATH =  Path(os.getenv("AOI_PATH", "/data/AOI/AOI_diss.shp"))
+BASE_DIR = Path(__file__).resolve().parents[2]
+AOI_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
+
 OVERLAY_DIR = Path("static/overlays")
 OVERLAY_DIR.mkdir(parents=True, exist_ok=True)
 

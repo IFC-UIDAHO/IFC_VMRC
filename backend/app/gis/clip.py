@@ -24,9 +24,8 @@ from app.core.config import RASTER_ROOT, AOI_PATH, MORTALITY_ROOT
 # AOI SHAPEFILE PATH
 # ============================================================
 
-AOI_SHP_PATH = Path(os.getenv("AOI_PATH", "/data/AOI/AOI_diss.shp"))
-
-
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+AOI_SHP_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
 # ============================================================
 # Load Full AOI as GeoJSON (optional for API GET /aoi)
 # ============================================================

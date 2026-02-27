@@ -1,9 +1,10 @@
 # app/services/raster_index.py
 from pathlib import Path
 import hashlib
+import os
 
 # NEW ROOT FOLDER
-RASTER_ROOT = Path(r"D:\VMRC_Project\Data_Analysis!!\Nov20")
+RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
 
 RASTER_LOOKUP_LIST = []
 

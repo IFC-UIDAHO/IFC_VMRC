@@ -12,7 +12,8 @@ from shapely.ops import unary_union
 router = APIRouter()
 
 # AOI shapefile path
-AOI_SHP_PATH = Path(r"D:\VMRC_Project\Data_Analysis!!\AOI_diss\AOI_diss.shp")
+BASE_DIR = Path(__file__).resolve().parents[3]  # backend/
+AOI_SHP_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
 
 # Simple in-memory cache so we don't keep re-reading the shapefile
 _global_aoi_geojson = None
@@ -31,7 +32,7 @@ def load_global_aoi_geojson() -> dict:
 
     geometries = []
 
-    with fiona.open(AOI_SHP_PATH, "r") as src:
+    with fiona.open(str(AOI_SHP_PATH), "r") as src:
         for feat in src:
             geom = shape(feat["geometry"])
             geometries.append(geom)

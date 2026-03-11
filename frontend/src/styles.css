@@ -2,6 +2,10 @@
    GLOBAL RESET + BASE STYLES
 ------------------------------------------------------- */
 
+html {
+  zoom: 0.95; /* Load page at 80% zoom */
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -348,10 +352,35 @@ body {
   transition: width 0.35s ease;
   z-index: 900;
   align-self: stretch; /* Stretch to fill grid row height */
+  height: 100%;
   min-height: 0; /* Allow shrinking */
-  overflow: hidden; /* Flex children (e.g. Created Rasters list) scroll internally */
+  overflow: hidden; /* Flex children scroll internally */
   display: flex;
   flex-direction: column;
+}
+
+/* Scrollable content area for Histogram + Created Rasters */
+.right-panel-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.right-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.right-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.right-panel-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 0;
+}
+
+.right-panel-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Content inside panel - flex column so tab content can fill height */
@@ -435,18 +464,13 @@ body {
    HISTOGRAM STYLING
 ------------------------------------------------------- */
 
-/* Created Rasters section: grows to fill remaining sidebar height below histogram */
+/* Created Rasters section: stacks below histogram; scrolls with right-panel-content */
 .created-rasters-section {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
 .created-rasters-list-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+  /* No overflow - content flows; parent right-panel-content scrolls */
 }
 
 .histogram-wrapper {

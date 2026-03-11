@@ -6,7 +6,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-
+import { backendUrl } from "../../lib/rasterApi";
 /**
  * Safe stringify that won't crash on Leaflet objects
  */
@@ -267,10 +267,7 @@ export default function LayerGroupManager({
       return overlayByRasterId.current.get(rasterId);
     }
 
-    const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-    let fullUrl = overlayUrl.startsWith("http")
-      ? overlayUrl
-      : `${BACKEND_BASE}${overlayUrl}`;
+    let fullUrl = backendUrl(overlayUrl);
     // Cache-bust so each overlay has a unique URL and the browser doesn't reuse one image for all
     fullUrl = fullUrl + (fullUrl.includes("?") ? "&" : "?") + "v=" + encodeURIComponent(rasterId);
 
@@ -1760,11 +1757,6 @@ export default function LayerGroupManager({
         }
       }
 
-      const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";
-      const fullUrl = raster.overlayUrl.startsWith("http")
-        ? raster.overlayUrl
-        : `${BACKEND_BASE}${raster.overlayUrl}`;
-
       // Handle both array format [[south, west], [north, east]] and object format {west, south, east, north}
       let leafletBounds;
       if (Array.isArray(raster.overlayBounds) && raster.overlayBounds.length === 2) {
@@ -1813,7 +1805,7 @@ export default function LayerGroupManager({
       const overlay = registerRasterOverlay({
         rasterId: raster.id,
         aoiId: aoiId,
-        overlayUrl: fullUrl,
+        overlayUrl: raster.overlayUrl,
         bounds: leafletBounds,
         opacity: 1.0,
       });

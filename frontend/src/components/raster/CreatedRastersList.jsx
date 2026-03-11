@@ -1,6 +1,6 @@
 // src/components/raster/CreatedRastersList.jsx
 
-import { apiUrl } from "../../lib/rasterApi";
+import { backendUrl } from "../../lib/rasterApi";
 import "./CreatedRastersList.css";
 
 // Color ramp matching BaseMap.jsx LEGEND_ITEMS
@@ -119,11 +119,7 @@ function RasterItem({ raster, isActive, onShow, onToggleVisibility, onRemove }) 
   });
 
   // Convert overlayUrl to absolute URL
-  const overlayImageUrl = raster.overlayUrl
-    ? raster.overlayUrl.startsWith("http")
-      ? raster.overlayUrl
-      : apiUrl(raster.overlayUrl)
-    : null;
+  const overlayImageUrl = raster.overlayUrl ? backendUrl(raster.overlayUrl) : null;
 
   return (
     <div
@@ -293,8 +289,6 @@ export default function CreatedRastersList({
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
-        minHeight: 0,
         padding: "12px",
       }}
     >

@@ -4,7 +4,7 @@ import hashlib
 import os
 
 # NEW ROOT FOLDER
-RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
+RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "D:/Mortality"))
 
 RASTER_LOOKUP_LIST = []
 
@@ -27,13 +27,13 @@ def discover_rasters():
     NEW ROOT: D:\VMRC_Project\Data_Analysis!!\Nov20
     
     Scans three datasets:
-    A1) DF Monthly Mortality rasters: {ROOT}/Mortality-DEC30/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
-        Examples: .../Mortality-DEC30/Douglas_Fir/0/h/M2.5_DF_D04_h.tif
-                  .../Mortality-DEC30/Douglas_Fir/75/vh/M2.5_DF_N09_vh.tif
+    A1) DF Monthly Mortality rasters: {ROOT}/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
+        Examples: .../Douglas_Fir/0/h/M2.5_DF_D04_h.tif
+                  .../Douglas_Fir/75/vh/M2.5_DF_N09_vh.tif
        
-    A2) WH Monthly Mortality rasters: {ROOT}/Mortality2.5-Dec26/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
-        Examples: .../Mortality2.5-Dec26/Western_Hemlock/75/M2.5_D04.tif
-                  .../Mortality2.5-Dec26/Western_Hemlock/50/M2.5_N07.tif
+    A2) WH Monthly Mortality rasters: {ROOT}/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
+        Examples: .../Western_Hemlock/75/M2.5_D04.tif
+                  .../Western_Hemlock/50/M2.5_N07.tif
         - cover in {0,25,50,75,100}
         - MM in {04,05,06,07,08,09}
         - COND_INIT is D/W/N mapped from Dry/Wet/Normal
@@ -64,10 +64,10 @@ def discover_rasters():
     print(f"[INFO] Root directory: {RASTER_ROOT}")
     
     # Dataset A: Monthly Mortality rasters
-    # A1) DF Mortality: {ROOT}/Mortality-DEC30/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
-    mortality_df_base = RASTER_ROOT / "Mortality-DEC30"
-    # A2) WH Mortality: {ROOT}/Mortality2.5-Dec26/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
-    mortality_wh_base = RASTER_ROOT / "Mortality2.5-Dec26"
+    # A1) DF Mortality: {ROOT}/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
+    mortality_df_base = RASTER_ROOT
+    # A2) WH Mortality: {ROOT}/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
+    mortality_wh_base = RASTER_ROOT
     
     print(f"[INFO] Scanning Monthly Mortality rasters...")
     
@@ -120,14 +120,14 @@ def discover_rasters():
             print(f"[WARNING] Searched pattern: {wh_mortality_base}/**/M2.5_*.tif")
     else:
         print(f"[WARNING] Western Hemlock Mortality directory not found: {wh_mortality_base}")
-        print(f"[WARNING] Expected structure: {RASTER_ROOT}/Mortality2.5-Dec26/Western_Hemlock/{{Cover}}/M2.5_*.tif")
+        print(f"[WARNING] Expected structure: {RASTER_ROOT}/Western_Hemlock/{{Cover}}/M2.5_*.tif")
     
     if mortality_count > 0:
         print(f"[INFO] ✓ Found {mortality_count} total Monthly Mortality rasters (DF + WH)")
     else:
         print(f"[WARNING] No Monthly Mortality rasters found")
-        print(f"[WARNING] Expected DF structure: {RASTER_ROOT}/Mortality-DEC30/Douglas_Fir/{{Cover}}/{{StressClass}}/M2.5_DF_*.tif")
-        print(f"[WARNING] Expected WH structure: {RASTER_ROOT}/Mortality2.5-Dec26/Western_Hemlock/{{Cover}}/M2.5_*.tif")
+        print(f"[WARNING] Expected DF structure: {RASTER_ROOT}/Douglas_Fir/{{Cover}}/{{StressClass}}/M2.5_DF_*.tif")
+        print(f"[WARNING] Expected WH structure: {RASTER_ROOT}/Western_Hemlock/{{Cover}}/M2.5_*.tif")
     
     # Dataset B: High Stress Mortality rasters
     # B1) DF HSL: {ROOT}/HighStressMortality/Douglas_Fir/{Cover}/HSL2.5_DF_*.tif

@@ -1,19 +1,13 @@
 # app/api/v1/routes_aoi.py
 
-from pathlib import Path
 import json
-
 from fastapi import APIRouter, HTTPException, status, UploadFile, File
-
 import fiona
 from shapely.geometry import shape, mapping
 from shapely.ops import unary_union
+from app.core.config import AOI_PATH
 
 router = APIRouter()
-
-# AOI shapefile path
-BASE_DIR = Path(__file__).resolve().parents[3]  # backend/
-AOI_SHP_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
 
 # Simple in-memory cache so we don't keep re-reading the shapefile
 _global_aoi_geojson = None
@@ -27,12 +21,12 @@ def load_global_aoi_geojson() -> dict:
     if _global_aoi_geojson is not None:
         return _global_aoi_geojson
 
-    if not AOI_SHP_PATH.exists():
-        raise FileNotFoundError(f"AOI shapefile not found at: {AOI_SHP_PATH}")
+    if not AOI_PATH.exists():
+        raise FileNotFoundError(f"AOI shapefile not found at: {AOI_PATH}")
 
     geometries = []
 
-    with fiona.open(str(AOI_SHP_PATH), "r") as src:
+    with fiona.open(str(AOI_PATH), "r") as src:
         for feat in src:
             geom = shape(feat["geometry"])
             geometries.append(geom)

@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
 from app.services.raster_service import clip_raster_for_layer, resolve_raster_path
+from app.core.config import EXPORTS_DIR, OVERLAYS_DIR, STATIC_DIR, BACKEND_DIR
 from app.services.layer_metadata import compute_pixel_size
 from pathlib import Path
 import rasterio
@@ -2138,7 +2139,7 @@ def export_multi_aoi_pdf(req: ExportRequest):
         base_filename = build_export_filename(req.context, "")
         if not base_filename:
             base_filename = generate_default_filename()
-    out_dir = Path("static/exports") / export_id
+    out_dir = EXPORTS_DIR / export_id
     out_dir.mkdir(parents=True, exist_ok=True)
     
     pdf_name = f"{base_filename}.pdf"
@@ -2395,7 +2396,7 @@ def export_raster(req: ExportRequest):
             base_filename = generate_default_filename()
 
     # Save exports to static/exports for serving via StaticFiles
-    out_dir = Path("static/exports") / export_id
+    out_dir = EXPORTS_DIR / export_id
     out_dir.mkdir(parents=True, exist_ok=True)
     
     output_files = {}

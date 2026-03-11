@@ -14,30 +14,19 @@ from shapely.geometry import shape as shapely_shape, mapping, Polygon, MultiPoly
 from shapely.ops import unary_union
 from shapely.validation import make_valid
 import numpy as np
-import fiona
 import imageio
 from typing import Optional
-
+from app.core.config import OVERLAYS_DIR
 from app.services.raster_index import RASTER_LOOKUP_LIST
 
-# AOI + output dir
-BASE_DIR = Path(__file__).resolve().parents[2]
-AOI_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
+#--------------------------------
+#Overlay
+#--------------------------------
 
-OVERLAY_DIR = Path("static/overlays")
-OVERLAY_DIR.mkdir(parents=True, exist_ok=True)
+OVERLAYS_DIR.mkdir(parents=True, exist_ok=True)
 
-
-# -----------------------------
-# GLOBAL AOI
-# -----------------------------
-def load_global_aoi_geom():
-    with fiona.open(str(AOI_PATH), "r") as src:
-        geoms = [shapely_shape(feat["geometry"]) for feat in src]
-    return unary_union(geoms)
-
-
-GLOBAL_AOI = load_global_aoi_geom()
+# Alias for backward compatibility (routes_raster imports this)
+OVERLAY_DIR = OVERLAYS_DIR
 
 
 def resolve_raster_path(raster_layer_id: int) -> str:
@@ -452,101 +441,64 @@ def clip_raster_for_layer(raster_layer_id: int, user_clip_geojson: dict, zoom: O
                 print(f"[CLIP] Source has no nodata, using {nodata_value} as nodata value")
             else:
                 print(f"[CLIP] Using source nodata value: {nodata_value}")
-            
+
             # ============================================================
             # Overlay generation (zoom-independent): half-pixel buffer at native resolution
             # ============================================================
-                # Raster resolution causes unavoidable edge stair-stepping;
-                # buffering improves visual coverage.
-                # 
-                # Coarse resolution (~27m/pixel) creates blocky pixel grid that
-                # visually appears not to fully cover AOI edges, even with all_touched=True.
-                # Buffering by half a pixel extends geometry slightly to ensure
-                # edge pixels are fully included in overlay rendering.
-                #
-                # IMPORTANT: This is VISUAL ONLY - histogram and export use original AOI.
-                # ============================================================
-                
-                # Compute buffer distance = 0.5 * max(abs(res_x), abs(res_y))
-                buffer_dist = 0.5 * max(abs(native_res_x), abs(native_res_y))
-                print(f"[CLIP] Buffer distance: {buffer_dist:.2f} (half pixel)")
-                
-                # Buffer the geometry for overlay generation ONLY
-                # This provides better visual coverage while keeping analysis accurate
-                buffered_geom_shapely = original_geom_shapely.buffer(buffer_dist)
-                buffered_geom_raster_crs = mapping(buffered_geom_shapely)
-                
-                print(f"[CLIP] Original geometry bounds: {original_geom_shapely.bounds}")
-                print(f"[CLIP] Buffered geometry bounds: {buffered_geom_shapely.bounds}")
-                print(f"[CLIP] ✓ Using BUFFERED geometry for overlay PNG (visual fix)")
-                print(f"[CLIP] ✓ Using ORIGINAL geometry for histogram/export (accurate analysis)")
-                
-                # Use buffered geometry for overlay clipping
-                shapes_overlay = [buffered_geom_raster_crs]  # Buffered for overlay
-                
-                # Determine nodata value: use source nodata if available, otherwise choose based on dtype
-                nodata_value = src.nodata
-                if nodata_value is None:
-                    # Choose a safe nodata value based on dtype
-                    if np.issubdtype(src.dtypes[0], np.integer):
-                        # For integer types, use a value outside typical range
-                        if src.dtypes[0] == np.uint8:
-                            nodata_value = 255
-                        elif src.dtypes[0] == np.uint16:
-                            nodata_value = 65535
+            # Raster resolution causes unavoidable edge stair-stepping;
+            # buffering improves visual coverage.
+            #
+            # Coarse resolution (~27m/pixel) creates blocky pixel grid that
+            # visually appears not to fully cover AOI edges, even with all_touched=True.
+            # Buffering by half a pixel extends geometry slightly to ensure
+            # edge pixels are fully included in overlay rendering.
+            #
+            # IMPORTANT: This is VISUAL ONLY - histogram and export use original AOI.
+            # ============================================================
+
+            # Compute buffer distance = 0.5 * max(abs(res_x), abs(res_y))
+            buffer_dist = 0.5 * max(abs(native_res_x), abs(native_res_y))
+            print(f"[CLIP] Buffer distance: {buffer_dist:.2f} (half pixel)")
+
+            # Buffer the geometry for overlay generation ONLY
+            buffered_geom_shapely = original_geom_shapely.buffer(buffer_dist)
+            buffered_geom_raster_crs = mapping(buffered_geom_shapely)
+
+            # Use buffered geometry for overlay clipping
+            shapes_overlay = [buffered_geom_raster_crs]  # Buffered for overlay
+
+            clipped, out_transform = mask(
+                src,
+                shapes_overlay,
+                crop=True,
+                all_touched=True,
+                filled=True,
+                nodata=nodata_value
+            )
+
+            # Debug validation: Verify polygon mask was applied (not just bbox crop)
+            if clipped.size == 0:
+                print(f"[DEBUG] ⚠️  Clipped result is empty: shape={clipped.shape}")
+            else:
+                try:
+                    if clipped.ndim == 3:
+                        if clipped.shape[0] > 0:
+                            check_band = np.mean(clipped, axis=0)
                         else:
-                            nodata_value = -9999
+                            check_band = clipped[0] if clipped.shape[0] == 1 else np.zeros_like(clipped[0])
                     else:
-                        # For float types, use a sentinel value
-                        nodata_value = -9999
-                    print(f"[CLIP] Source has no nodata, using {nodata_value} as nodata value")
-                else:
-                    print(f"[CLIP] Using source nodata value: {nodata_value}")
-                
-                print(f"Calling rasterio.mask.mask with buffered geometry in CRS: {raster_crs}")
-                
-                # ============================================================
-                # MASK RASTER: Apply TRUE polygon mask (not bbox crop)
-                # ============================================================
-                # CRITICAL: This applies a polygon mask, not just a bounding box crop.
-                # Pixels outside the polygon are filled with nodata and will be transparent.
-                # all_touched=True ensures every pixel touched by the boundary is included.
-                # ============================================================
-                print(f"[CLIP] Applying polygon mask (not bbox crop)...")
-                print(f"[CLIP] AOI bounds in raster CRS: {original_geom_shapely.bounds}")
-                clipped, out_transform = mask(
-                    src,
-                    shapes_overlay,  # Polygon geometry in raster CRS (GeoJSON dict) - NOT bounds!
-                    crop=True,  # Crop to polygon bounds (but mask by polygon shape)
-                    all_touched=True,  # CRITICAL: Include any pixel touched by boundary
-                    filled=True,  # Fill outside polygon with nodata (makes transparent)
-                    nodata=nodata_value  # Pixels outside polygon become this value
-                )
-                
-                # Debug validation: Verify polygon mask was applied (not just bbox crop)
-                # Guard against empty arrays before calling np.mean()
-                if clipped.size == 0:
-                    print(f"[DEBUG] ⚠️  Clipped result is empty: shape={clipped.shape}")
-                else:
-                    try:
-                        if clipped.ndim == 3:
-                            if clipped.shape[0] > 0:
-                                check_band = np.mean(clipped, axis=0)
-                            else:
-                                check_band = clipped[0] if clipped.shape[0] == 1 else np.zeros_like(clipped[0])
-                        else:
-                            check_band = clipped
-                        nodata_count = np.sum((check_band == nodata_value) & np.isfinite(check_band))
-                        total_pixels = check_band.size
-                        nodata_percent = (nodata_count / total_pixels * 100) if total_pixels > 0 else 0
-                        print(f"[DEBUG] Mask validation:")
-                        print(f"[DEBUG]   - Output raster shape: {clipped.shape}")
-                        print(f"[DEBUG]   - Nodata pixels: {nodata_count}/{total_pixels} ({nodata_percent:.1f}%)")
-                        print(f"[DEBUG]   - Valid pixels (inside polygon): {total_pixels - nodata_count}")
-                        print(f"[DEBUG] ✓ Polygon mask applied - outside AOI is nodata (will be transparent in PNG)")
-                    except (ValueError, ZeroDivisionError) as e:
-                        print(f"[DEBUG] ⚠️  Error computing mask validation: {e}")
-            
+                        check_band = clipped
+                    nodata_count = np.sum((check_band == nodata_value) & np.isfinite(check_band))
+                    total_pixels = check_band.size
+                    nodata_percent = (nodata_count / total_pixels * 100) if total_pixels > 0 else 0
+                    print(f"[DEBUG] Mask validation:")
+                    print(f"[DEBUG]   - Output raster shape: {clipped.shape}")
+                    print(f"[DEBUG]   - Nodata pixels: {nodata_count}/{total_pixels} ({nodata_percent:.1f}%)")
+                    print(f"[DEBUG]   - Valid pixels (inside polygon): {total_pixels - nodata_count}")
+                    print(f"[DEBUG] ✓ Polygon mask applied - outside AOI is nodata (will be transparent in PNG)")
+                except (ValueError, ZeroDivisionError) as e:
+                    print(f"[DEBUG] ⚠️  Error computing mask validation: {e}")
+
             print(f"✓ Mask operation successful")
             print(f"Clipped shape: {clipped.shape}")
             print(f"Clipped type: {type(clipped)}")
@@ -933,15 +885,7 @@ def clip_raster_for_layer(raster_layer_id: int, user_clip_geojson: dict, zoom: O
     # Save PNG with crisp pixel rendering (nearest neighbor, no interpolation)
     # imageio.imwrite preserves exact pixel values - no interpolation applied
     # CRITICAL: Do NOT resize or apply any interpolation - preserve native pixel size
-    # 
-    # NOTE: For future zoom-based rendering, we could:
-    # - Accept a scale_factor parameter (e.g., 1.0 = native, 2.0 = 2x resolution)
-    # - Use rasterio.warp.reproject with scale_factor to generate higher-res PNGs
-    # - Cache multiple resolutions and serve based on map zoom level
-    # - This would prevent pixel stretching when zooming in
-    # BUT: If resizing is needed, MUST use nearest-neighbor only (no bilinear/bicubic)
-    out_png = OVERLAY_DIR / f"{uuid.uuid4().hex}.png"
-    # imageio.imwrite with numpy array preserves exact values - no resizing/interpolation
+    out_png = OVERLAYS_DIR / f"{uuid.uuid4().hex}.png"
     imageio.imwrite(out_png, rgba)
     
     print(f"[PNG] Saved: {out_png.name}")

@@ -51,6 +51,7 @@ function InitialBoundsSetter() {
 
     try {
       map.fitBounds(DEFAULT_BOUNDS, { padding: [20, 20] });
+      map.setZoom(map.getZoom() - 1.6); // Zoom out one level from fit
       didInitRef.current = true;
     } catch (err) {
       console.warn("[BaseMap] Failed to apply initial bounds:", err);

@@ -17,15 +17,8 @@ from rasterio.warp import transform_geom
 from shapely.geometry import shape, mapping
 from shapely.ops import unary_union
 from shapely.geometry.base import BaseGeometry
-from app.core.config import RASTER_ROOT, AOI_PATH, MORTALITY_ROOT
+from app.core.config import AOI_PATH
 
-
-# ============================================================
-# AOI SHAPEFILE PATH
-# ============================================================
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-AOI_SHP_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
 # ============================================================
 # Load Full AOI as GeoJSON (optional for API GET /aoi)
 # ============================================================
@@ -34,11 +27,11 @@ def get_global_aoi_geojson() -> dict:
     """
     Return AOI as a FeatureCollection (for frontend display).
     """
-    if not AOI_SHP_PATH.exists():
-        raise FileNotFoundError(f"AOI shapefile not found at: {AOI_SHP_PATH}")
+    if not AOI_PATH.exists():
+        raise FileNotFoundError(f"AOI shapefile not found at: {AOI_PATH}")
 
     features = []
-    with fiona.open(AOI_SHP_PATH, "r") as src:
+    with fiona.open(AOI_PATH, "r") as src:
         for feat in src:
             features.append({
                 "type": "Feature",
@@ -61,13 +54,13 @@ def _load_global_aoi_feature() -> dict:
     """
     Load AOI shapefile and dissolve all parts into ONE geometry.
     """
-    if not AOI_SHP_PATH.exists():
-        raise FileNotFoundError(f"AOI shapefile not found: {AOI_SHP_PATH}")
+    if not AOI_PATH.exists():
+        raise FileNotFoundError(f"AOI shapefile not found: {AOI_PATH}")
 
     geoms = []
     props = {}
 
-    with fiona.open(AOI_SHP_PATH, "r") as src:
+    with fiona.open(AOI_PATH, "r") as src:
         for feat in src:
             g = shape(feat["geometry"])
             geoms.append(g)
@@ -162,7 +155,7 @@ def clip_raster_with_global_aoi_and_user_clip(
     print(f"[CLIP] Reprojecting geometries to raster CRS: {raster_crs}")
     
     # Get global AOI CRS from shapefile
-    with fiona.open(AOI_SHP_PATH, "r") as shp:
+    with fiona.open(AOI_PATH, "r") as shp:
         global_aoi_crs = shp.crs
         print(f"[CLIP] Global AOI CRS: {global_aoi_crs}")
     

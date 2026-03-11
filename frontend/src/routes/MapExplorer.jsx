@@ -3095,45 +3095,6 @@ export default function MapExplorer() {
           </>
         )}
 
-        {/* SELECTED RASTER DISPLAY */}
-        {selectedRasterPath && (
-          <div
-            className="filter-block"
-            style={{
-              backgroundColor: "#ffffff",
-              border: "1px solid #e2e8f0",
-              borderRadius: 0,
-              padding: "10px 12px",
-              marginBottom: "12px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "12px",
-                color: "#1e293b",
-                lineHeight: "1.5",
-                fontFamily: "monospace",
-                wordBreak: "break-all",
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              <div
-                style={{
-                  fontWeight: 600,
-                  marginBottom: "4px",
-                  fontSize: "11px",
-                  color: "#64748b",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                }}
-              >
-                Raster:
-              </div>
-              {selectedRasterPath}
-            </div>
-          </div>
-        )}
-
         {/* GENERATE BUTTON */}
         <div className="filter-block">
           {(() => {
@@ -3656,15 +3617,16 @@ export default function MapExplorer() {
         </div>
 
         <div className="tab-content">
-          {/* Layer Info Panel - Always visible when metadata is available */}
-          {(activeRasterId || activeDatasetPreview) && (
-            <div style={{ marginBottom: "16px" }}>
-              <LayerInfoPanel metadata={layerMetadata} isLoading={isLoadingMetadata} />
-            </div>
-          )}
+          <div className="right-panel-content">
+            {/* Layer Info Panel - Always visible when metadata is available */}
+            {(activeRasterId || activeDatasetPreview) && (
+              <div style={{ marginBottom: "16px" }}>
+                <LayerInfoPanel metadata={layerMetadata} isLoading={isLoadingMetadata} />
+              </div>
+            )}
 
-          {activeTab === "table" && (
-            <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+            {activeTab === "table" && (
+            <div style={{ marginBottom: "16px" }}>
               {/* Dropdown to select which AOI's stats to display */}
               {createdRasters.length > 0 && (
                 <div style={{ marginBottom: "16px" }}>
@@ -3745,50 +3707,50 @@ export default function MapExplorer() {
             <>
               {/* Histogram for: dropdown — same list as Stats / Created Rasters */}
               {createdRasters.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-                  <div style={{ flexShrink: 0 }}>
-                    <div style={{ marginBottom: "6px" }}>
-                      <label style={{ display: "block", marginBottom: "4px", fontSize: "13px", fontWeight: 500, color: "#374151" }}>
-                        Histogram for:
-                      </label>
-                      <select
-                        value={activeCreatedRasterId || ""}
-                        onChange={(e) => {
-                          const selectedId = e.target.value;
-                          if (selectedId) handleShowRaster(selectedId);
-                        }}
-                        style={{
-                          width: "100%",
-                          padding: "8px 12px",
-                          fontSize: "13px",
-                          border: "1px solid #d1d5db",
-                          borderRadius: "4px",
-                          backgroundColor: "#ffffff",
-                          color: "#111827",
-                        }}
-                      >
-                        <option value="">Select a raster…</option>
-                        {createdRasters.map((raster) => (
-                          <option key={raster.id} value={raster.id}>
-                            {raster.name || raster.aoiName || `Raster ${raster.id}`}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {/* Show histogram for selected raster */}
-                    {activeCreatedRasterId && createdRasters.find((r) => r.id === activeCreatedRasterId) ? (
+                <div>
+                  <div style={{ marginBottom: "6px" }}>
+                    <label style={{ display: "block", marginBottom: "4px", fontSize: "13px", fontWeight: 500, color: "#374151" }}>
+                      Histogram for:
+                    </label>
+                    <select
+                      value={activeCreatedRasterId || ""}
+                      onChange={(e) => {
+                        const selectedId = e.target.value;
+                        if (selectedId) handleShowRaster(selectedId);
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        fontSize: "13px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        backgroundColor: "#ffffff",
+                        color: "#111827",
+                      }}
+                    >
+                      <option value="">Select a raster…</option>
+                      {createdRasters.map((raster) => (
+                        <option key={raster.id} value={raster.id}>
+                          {raster.name || raster.aoiName || `Raster ${raster.id}`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/* Show histogram for selected raster */}
+                  {activeCreatedRasterId && createdRasters.find((r) => r.id === activeCreatedRasterId) ? (
+                    <div style={{ marginBottom: "16px" }}>
                       <HistogramPanel
                         values={pixelValues}
                         stats={stats}
                         histogram={histogram}
                       />
-                    ) : (
-                      <div style={{ padding: "20px", textAlign: "center", color: "#6b7280", fontSize: "13px" }}>
-                        Select a raster from the dropdown above to view its histogram.
-                      </div>
-                    )}
-                  </div>
-                  {/* Created Rasters section — fills remaining height, list scrolls inside */}
+                    </div>
+                  ) : (
+                    <div style={{ padding: "20px", textAlign: "center", color: "#6b7280", fontSize: "13px" }}>
+                      Select a raster from the dropdown above to view its histogram.
+                    </div>
+                  )}
+                  {/* Created Rasters section — scrolls with panel content */}
                   <div className="created-rasters-section">
                     <CreatedRastersList
                       rasters={createdRasters}
@@ -3807,6 +3769,7 @@ export default function MapExplorer() {
               )}
             </>
           )}
+          </div>
         </div>
       </SlidingPanel>
     </div>

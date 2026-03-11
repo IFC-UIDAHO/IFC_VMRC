@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from app.core.config import settings
+from app.core.config import settings, STATIC_DIR, BACKEND_DIR
 from app.api.v1.api import api_router
 
 
@@ -38,46 +38,37 @@ def create_application() -> FastAPI:
     # ---------- STATIC FILES ----------
     # Serves PNG overlays located in /static/overlays/*
     # Make sure "static" folder exists relative to backend working directory
-    app.mount("/static", StaticFiles(directory="static"), name="static")
-
+    STATIC_DIR.mkdir(parents=True, exist_ok=True)
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
     # ---------- ROUTERS ----------
     app.include_router(api_router, prefix="/api/v1")
 
     # =====================================================
     # Serve frontend (Vite build)
     # Repo layout:
-    #   VMRC/
-    #     vmrc-portal-backend/
-    #       app/main.py   <-- this file
-    #     vmrc-portal-frontend/
+    #   repo/
+    #     backend/
+    #       app/main.py
+    #     frontend/
     #       dist/
     # =====================================================
-    FRONTEND_DIST = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..",          # app -> backend -> VMRC
-            "vmrc-portal-frontend",
-            "dist",
-        )
-    )
+    FRONTEND_DIST = BACKEND_DIR.parent / "frontend" / "dist"
 
-    if os.path.isdir(FRONTEND_DIST):
-        assets_dir = os.path.join(FRONTEND_DIST, "assets")
-        if os.path.isdir(assets_dir):
-            app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+    if FRONTEND_DIST.is_dir():
+        assets_dir = FRONTEND_DIST / "assets"
+        if assets_dir.is_dir():
+            app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
 
         @app.get("/", include_in_schema=False)
         def serve_frontend_root():
-            return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+            return FileResponse(str(FRONTEND_DIST / "index.html"))
 
-        # Optional SPA fallback: any unknown path should return index.html
-        # (helps React Router if you use it)
         @app.get("/{full_path:path}", include_in_schema=False)
         def serve_frontend_spa(full_path: str):
-            candidate = os.path.join(FRONTEND_DIST, full_path)
-            if os.path.isfile(candidate):
-                return FileResponse(candidate)
-            return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+            candidate = FRONTEND_DIST / full_path
+            if candidate.is_file():
+                return FileResponse(str(candidate))
+            return FileResponse(str(FRONTEND_DIST / "index.html"))
 
     return app
 

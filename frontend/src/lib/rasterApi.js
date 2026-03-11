@@ -1,8 +1,14 @@
 // src/lib/rasterApi.js
-
 const API_BASE_URL =
   (import.meta.env.VITE_API_BASE_URL || "").trim() ||
   "http://127.0.0.1:8000";
+
+const BACKEND_BASE_URL =
+  (import.meta.env.VITE_BACKEND_URL || "").trim() ||
+  API_BASE_URL.replace(/\/api\/?$/, "");
+
+export const API_BASE = API_BASE_URL;
+export const BACKEND_BASE = BACKEND_BASE_URL;
 
 export function apiUrl(path) {
   const base = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
@@ -10,11 +16,17 @@ export function apiUrl(path) {
   return `${base}${p}`;
 }
 
-// Export API base for debugging
-export const API_BASE = API_BASE_URL;
+export function backendUrl(path) {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
 
-// Print once on module load
-console.log("[rasterApi] API_BASE_URL =", API_BASE_URL);
+  const base = BACKEND_BASE_URL.endsWith("/")
+    ? BACKEND_BASE_URL.slice(0, -1)
+    : BACKEND_BASE_URL;
+
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${p}`;
+}
 
 /**
  * Elevation at (lat, lng). Backend: GET /api/v1/elevation?lat=..&lng=..

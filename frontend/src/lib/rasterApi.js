@@ -1,8 +1,7 @@
 // src/lib/rasterApi.js
 
 const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL || "").trim() ||
-  "http://127.0.0.1:8000";
+  (import.meta.env.VITE_API_BASE_URL || "").trim();
 
 export function apiUrl(path) {
   const base = API_BASE_URL.endsWith("/") ? API_BASE_URL.slice(0, -1) : API_BASE_URL;

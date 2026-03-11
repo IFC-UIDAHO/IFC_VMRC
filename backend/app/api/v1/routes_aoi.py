@@ -12,8 +12,7 @@ from shapely.ops import unary_union
 router = APIRouter()
 
 # AOI shapefile path
-BASE_DIR = Path(__file__).resolve().parents[3]  # backend/
-AOI_SHP_PATH = BASE_DIR / "data" / "aoi" / "AOI_diss.shp"
+from app.core.config import AOI_PATH as AOI_SHP_PATH
 
 # Simple in-memory cache so we don't keep re-reading the shapefile
 _global_aoi_geojson = None

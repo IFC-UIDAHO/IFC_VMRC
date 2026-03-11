@@ -30,7 +30,7 @@ Pillow>=10.0.0,<12.0.0
 python-multipart>=0.0.9,<0.1.0
 
 # Shapefile
-fiona>=1.9.0,<2.0.0
+fiona>=1.9.0
 
 # PDF generation
 reportlab>=4.0.0,<5.0.0

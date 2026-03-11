@@ -65,9 +65,9 @@ def discover_rasters():
     
     # Dataset A: Monthly Mortality rasters
     # A1) DF Mortality: {ROOT}/Mortality-DEC30/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
-    mortality_df_base = RASTER_ROOT / "Mortality-DEC30"
+    mortality_df_base = RASTER_ROOT / "Douglas_Fir"
     # A2) WH Mortality: {ROOT}/Mortality2.5-Dec26/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
-    mortality_wh_base = RASTER_ROOT / "Mortality2.5-Dec26"
+    mortality_wh_base = RASTER_ROOT / "Western_Hemlock"
     
     print(f"[INFO] Scanning Monthly Mortality rasters...")
     

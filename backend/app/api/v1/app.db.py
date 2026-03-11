@@ -12,7 +12,7 @@ layer = RasterLayer(
     name="DF Dry April demo",
     description="Demo raster for clipping",
     storage_path=str(
-        RASTER_ROOT / "Mortality-DEC30" / "Douglas_Fir" / "h" / "M_DF_D04_h.tif"
+        RASTER_ROOT / "Douglas_Fir" / "h" / "M_DF_D04_h.tif"
     ),
 )
 db.add(layer)

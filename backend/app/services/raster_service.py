@@ -18,6 +18,7 @@ import imageio
 from typing import Optional
 from app.core.config import OVERLAYS_DIR
 from app.services.raster_index import RASTER_LOOKUP_LIST
+from app.core.config import AOI_PATH
 
 #--------------------------------
 #Overlay

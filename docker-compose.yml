@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    expose:
+      - "8000"
+    environment:
+      - RASTER_ROOT=/data/Mortality
+      - AOI_PATH=/app/backend/data/aoi/AOI_diss.shp
+      - ALLOWED_ORIGINS=http://localhost:8777,http://127.0.0.1:8777
+    volumes:
+      # Production: mount raster data from host
+      # - /html/ifc-vmrc/Mortality:/data/Mortality:ro
+      # Persist generated overlays across restarts
+      - backend_static:/app/static
+    networks:
+      - vmrc
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8777:80"
+    depends_on:
+      - backend
+    networks:
+      - vmrc
+
+networks:
+  vmrc:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.30.0.0/24
+
+volumes:
+  backend_static:

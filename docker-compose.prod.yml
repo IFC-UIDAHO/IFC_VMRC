@@ -1,0 +1,4 @@
+services:
+  backend:
+    volumes:
+      - /html/ifc_vmrc/Mortality:/data/Mortality:ro,z

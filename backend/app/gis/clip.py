@@ -17,8 +17,14 @@ from rasterio.warp import transform_geom
 from shapely.geometry import shape, mapping
 from shapely.ops import unary_union
 from shapely.geometry.base import BaseGeometry
-from app.core.config import AOI_PATH
+from app.core.config import RASTER_ROOT, AOI_PATH, MORTALITY_ROOT
 
+
+# ============================================================
+# AOI SHAPEFILE PATH
+# ============================================================
+
+AOI_SHP_PATH = AOI_PATH
 # ============================================================
 # Load Full AOI as GeoJSON (optional for API GET /aoi)
 # ============================================================

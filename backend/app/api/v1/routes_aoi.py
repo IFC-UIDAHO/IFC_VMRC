@@ -9,6 +9,9 @@ from app.core.config import AOI_PATH
 
 router = APIRouter()
 
+# AOI shapefile path
+from app.core.config import AOI_PATH as AOI_SHP_PATH
+
 # Simple in-memory cache so we don't keep re-reading the shapefile
 _global_aoi_geojson = None
 

@@ -617,7 +617,7 @@ def render_clipped_preview_png(raster_layer_id: int, user_clip_geojson: dict) ->
         
         # Load PNG bytes from file
         overlay_filename = Path(overlay_url).name
-        overlay_path = Path("static/overlays") / overlay_filename
+        overlay_path = OVERLAYS_DIR / overlay_filename
         
         if not overlay_path.exists():
             raise ValueError(f"PNG overlay file not found: {overlay_path}")
@@ -2273,7 +2273,7 @@ def export_multi_aoi_pdf(req: ExportRequest):
         try:
             if overlay_url:
                 overlay_filename = Path(overlay_url).name
-                overlay_path = Path("static/overlays") / overlay_filename
+                overlay_path = OVERLAYS_DIR / overlay_filename
                 
                 if overlay_path.exists():
                     print(f"[EXPORT] Using local overlay file: {overlay_path}")
@@ -2889,7 +2889,7 @@ def export_raster(req: ExportRequest):
                 
                 if overlay_url:
                     overlay_filename = Path(overlay_url).name
-                    overlay_path = Path("static/overlays") / overlay_filename
+                    overlay_path = OVERLAYS_DIR / overlay_filename
                     
                     if overlay_path.exists():
                         # Load PNG bytes from local file
@@ -3147,7 +3147,7 @@ async def export_pdf_report(req: PDFExportRequest):
             # Use provided overlay and stats (from frontend createdRasters)
             print(f"[PDF EXPORT] Using provided overlay_url and stats")
             overlay_filename = Path(req.overlay_url).name
-            overlay_path = Path("static/overlays") / overlay_filename
+            overlay_path = OVERLAYS_DIR / overlay_filename
             
             if overlay_path.exists():
                 with open(overlay_path, "rb") as f:
@@ -3173,7 +3173,7 @@ async def export_pdf_report(req: PDFExportRequest):
             overlay_url = clip_result.get("overlay_url", "")
             if overlay_url:
                 overlay_filename = Path(overlay_url).name
-                overlay_path = Path("static/overlays") / overlay_filename
+                overlay_path = OVERLAYS_DIR / overlay_filename
                 if overlay_path.exists():
                     with open(overlay_path, "rb") as f:
                         png_bytes = f.read()

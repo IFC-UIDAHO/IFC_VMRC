@@ -9,6 +9,7 @@ COPY . .
 
 # Empty string so fetch calls use relative URLs (nginx proxies to backend)
 ENV VITE_API_BASE_URL=""
+ENV VITE_BACKEND_URL=""
 RUN npm run build
 
 # --- Serve stage ---

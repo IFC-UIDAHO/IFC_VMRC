@@ -4,7 +4,7 @@ import hashlib
 import os
 
 # NEW ROOT FOLDER
-RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "D:/Mortality"))
+RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
 
 RASTER_LOOKUP_LIST = []
 
@@ -64,13 +64,9 @@ def discover_rasters():
     print(f"[INFO] Root directory: {RASTER_ROOT}")
     
     # Dataset A: Monthly Mortality rasters
-    # A1) DF Mortality: {ROOT}/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
-    mortality_df_base = RASTER_ROOT
-    # A2) WH Mortality: {ROOT}/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
-    mortality_wh_base = RASTER_ROOT
-    # A1) DF Mortality: {ROOT}/Mortality-DEC30/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
+    # A1) DF Mortality: {ROOT}/Mortality/Douglas_Fir/{Cover}/{StressClass}/M2.5_DF_*.tif
     mortality_df_base = RASTER_ROOT / "Douglas_Fir"
-    # A2) WH Mortality: {ROOT}/Mortality2.5-Dec26/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
+    # A2) WH Mortality: {ROOT}/Mortality/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
     mortality_wh_base = RASTER_ROOT / "Western_Hemlock"
     
     print(f"[INFO] Scanning Monthly Mortality rasters...")
@@ -94,8 +90,8 @@ def discover_rasters():
         print(f"[WARNING] DF Mortality base directory not found: {mortality_df_base}")
     
     # A2) WH Mortality rasters (M2.5_{COND_INIT}{MM}.tif in Western_Hemlock/{Cover}/ folders)
-    # Path: {ROOT}/Mortality2.5-Dec26/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
-    wh_mortality_base = mortality_wh_base / "Western_Hemlock" if mortality_wh_base.exists() else None
+    # Path: {ROOT}/Western_Hemlock/{Cover}/M2.5_{COND_INIT}{MM}.tif
+    wh_mortality_base = mortality_wh_base if mortality_wh_base.exists() else None
     wh_mortality_count = 0
     if wh_mortality_base and wh_mortality_base.exists():
         print(f"[INFO] Scanning Western Hemlock Mortality rasters in: {wh_mortality_base}")

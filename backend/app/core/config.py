@@ -8,7 +8,7 @@ from pydantic import BaseModel, AnyHttpUrl, field_validator
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 
-RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/D:/Mortality"))
+RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
 MORTALITY_ROOT = RASTER_ROOT
 
 # AOI bundled in repo

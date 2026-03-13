@@ -6,7 +6,7 @@ from pathlib import Path
 
 db = SessionLocal()
 
-RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "D:/Mortality"))
+RASTER_ROOT = Path(os.getenv("RASTER_ROOT", "/data/Mortality"))
 
 layer = RasterLayer(
     name="DF Dry April demo",

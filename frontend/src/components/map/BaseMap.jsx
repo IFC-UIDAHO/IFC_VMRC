@@ -1486,6 +1486,7 @@ export default function BaseMap({
           uploadedAois={uploadedAois.filter((aoi) => aoi.type === "upload")}
           drawnAoi={aois.find((aoi) => aoi.type === "draw") || null}
           createdRasters={createdRasters}
+          activeCreatedRasterId={activeCreatedRasterId || (createdRasters.length > 0 ? createdRasters[createdRasters.length - 1].id : null)}
           onRemoveAoi={onRemoveAoi}
           onRemoveRaster={onRemoveRaster}
           onRemoveRasterByAoiId={onRemoveRasterByAoiId}

@@ -146,6 +146,7 @@ export default function LayerGroupManager({
   uploadedAois = [], // Array of uploaded AOIs: [{id, name, geojson, type}]
   drawnAoi, // Single drawn AOI: {id, geojson, type} or null
   createdRasters = [], // Array of created rasters: [{id, overlayUrl, overlayBounds, aoiId, aoiType}]
+  activeCreatedRasterId = null, // ID of the selected/active raster (for showing only one per AOI)
   onRemoveAoi, // Callback when AOI is removed: (aoiId) => void
   onRemoveRaster, // Callback when raster overlay is removed: (rasterId) => void
   onRemoveRasterByAoiId, // Callback when raster overlay is removed by AOI ID: (aoiId) => void
@@ -1822,13 +1823,17 @@ export default function LayerGroupManager({
         activeRasterByAoiId.current.set(aoiId, raster.id);
       }
 
-      // Show ALL visible rasters on the map (one per AOI or multiple per AOI).
-      // Single source of truth: createdRasters with isVisible !== false.
-      // Do NOT hide overlays based on "active" — map displays every visible raster.
-      overlay.setOpacity(1.0);
-      overlay._hidden = false;
+      // Respect active selection: when multiple rasters exist for same AOI, only show the active one.
+      // Otherwise we overwrite setActiveRasterForAoi and cause the selected overlay to disappear.
+      const rastersForAoi = createdRasters.filter((r) => r.aoiId === aoiId && r.isVisible !== false);
+      const hasMultipleForAoi = rastersForAoi.length > 1;
+      const effectiveActiveId = activeCreatedRasterId || (rastersForAoi.length > 0 ? rastersForAoi[rastersForAoi.length - 1].id : null);
+      const shouldShow = !hasMultipleForAoi || raster.id === effectiveActiveId;
+
+      overlay.setOpacity(shouldShow ? 1.0 : 0);
+      overlay._hidden = !shouldShow;
     }
-  }, [map, createdRasters, registerOverlay, removeOverlayForAoiId]);
+  }, [map, createdRasters, activeCreatedRasterId, registerOverlay, removeOverlayForAoiId]);
 
 
   // ============================================================
